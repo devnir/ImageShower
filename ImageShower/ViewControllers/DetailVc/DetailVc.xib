@@ -17,8 +17,19 @@
         <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
             <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="K1h-zH-wNN">
+                    <rect key="frame" x="8" y="8" width="377" height="836"/>
+                </stackView>
+            </subviews>
             <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
             <color key="backgroundColor" systemColor="systemPinkColor"/>
+            <constraints>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="bottom" secondItem="K1h-zH-wNN" secondAttribute="bottom" constant="8" id="6cY-KG-SWU"/>
+                <constraint firstItem="K1h-zH-wNN" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" constant="8" id="Bam-bR-igS"/>
+                <constraint firstItem="K1h-zH-wNN" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="8" id="ZBw-c1-Edx"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="K1h-zH-wNN" secondAttribute="trailing" constant="8" id="qCN-23-mrI"/>
+            </constraints>
             <point key="canvasLocation" x="114" y="-11"/>
         </view>
     </objects>
