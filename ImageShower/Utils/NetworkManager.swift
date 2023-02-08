@@ -44,19 +44,32 @@ class NetworkManager {
                 self?.dispatchGroup.leave()
                 return
             }
+            
             if let image = UIImage(data: data!) {
-                switch imgNum {
-                case 0:
-                    self?.firstImg = image
-                case 1:
-                    self?.secondImg = image
-                case 2:
-                    self?.thirdImg = image
-                default:
-                    break
+                self?.setImageForNum(image: image, num: imgNum)
+            } else {
+                if let httpResponse = response as? HTTPURLResponse {
+                    print("httpResponse.statusCode")
+                    if httpResponse.statusCode == 404 {
+                        self?.setImageForNum(image: UIImage(named: "404")!, num: imgNum)
+                    }
                 }
             }
             self?.dispatchGroup.leave()
         }).resume()
     }
+    
+    private func setImageForNum(image: UIImage, num: Int) {
+        switch num {
+        case 0:
+            self.firstImg = image
+        case 1:
+            self.secondImg = image
+        case 2:
+            self.thirdImg = image
+        default:
+            break
+        }
+    }
+
 }

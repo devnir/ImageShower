@@ -48,6 +48,10 @@ extension ListVC: UICollectionViewDelegate {
             DispatchQueue.main.async {
                 self?.activityIndicator.stopAnimating()
                 let vc = DetailVc()
+                vc.model = self?.listItems[indexPath.row]
+                vc.firstImage = firstImg
+                vc.secondImage = secondImg
+                vc.thirdImage = thirdimg
                 self?.navigationController?.pushViewController(vc, animated: true)
             }
         }
