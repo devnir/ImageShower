@@ -55,6 +55,8 @@ class NetworkManager {
                 default:
                     break
                 }
+            } else {
+                print("some error \(imgNum)")
             }
             self?.dispatchGroup.leave()
         }).resume()
