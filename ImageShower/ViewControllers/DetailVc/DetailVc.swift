@@ -29,17 +29,25 @@ class DetailVc: UIViewController {
         let imageView1 = UIImageView()
         imageView1.image = firstImage
         stack.addArrangedSubview(imageView1)
+        imageView1.heightAnchor.constraint(equalToConstant: 100).isActive = true
+        imageView1.contentMode = .scaleAspectFit
         
         let imageView2 = UIImageView()
         imageView2.image = secondImage
         stack.addArrangedSubview(imageView2)
+        imageView2.heightAnchor.constraint(equalToConstant: 100).isActive = true
+        imageView2.contentMode = .scaleAspectFit
+        
         
         let imageView3 = UIImageView()
         imageView3.image = thirdImage
         stack.addArrangedSubview(imageView3)
+        imageView3.heightAnchor.constraint(equalToConstant: 100).isActive = true
+        imageView3.contentMode = .scaleAspectFit
         
         let details = UILabel()
         details.text = model?.details
+        details.numberOfLines = 0
         stack.addArrangedSubview(details)
     }
 }
