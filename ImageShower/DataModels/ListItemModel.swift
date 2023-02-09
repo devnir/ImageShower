@@ -8,9 +8,9 @@
 import Foundation
 
 struct ListItemModel {
-    let title: String
-    let firstImg: String
-    let secondImg: String
-    let thirdimg: String
-    let details: String
+    var title: String
+    var firstImg: String
+    var secondImg: String
+    var thirdimg: String
+    var details: String
 }
