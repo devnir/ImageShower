@@ -7,35 +7,19 @@
 
 import Foundation
 
-fileprivate enum ObjectFieldPattern: String {
-    case title = "title:(.+?),f"
-    case firstimg = "firstimg:(.+?),"
-    case secondimg = "secondimg:(.+?),"
-    case thirdimg = "thirdimg:(.+?),"
-    case details = "details:(.+?)\""
-    
-    var head: Int {
-        switch self {
-        case .title: return 6
-        case .firstimg: return 9
-        case .secondimg: return 10
-        case .thirdimg: return 9
-        case .details: return 8
-
-        }
-    }
-    
-    var patternLen: Int {
-        switch self {
-        case .title: return 8
-        case .firstimg: return 10
-        case .secondimg: return 11
-        case .thirdimg: return 10
-        case .details: return 9
-        }
-    }
+fileprivate enum ValueKeys: String, CaseIterable{
+    case title = "title:"
+    case firstimg = "firstimg:"
+    case secondimg = "secondimg:"
+    case thirdimg = "thirdimg:"
+    case details = "details:"
 }
 
+fileprivate struct KeyIndexValue {
+    let key : ValueKeys
+    let index: Int
+    var value: String
+}
 
 class DataParser {
     
@@ -52,7 +36,7 @@ class DataParser {
         {
             do {
                 let contents = try String(contentsOfFile: filepath)
-                let objects = self.getObjects(inText: contents)//self.getStringObjects(inText: contents, pattern: "\"(.+?)\"")
+                let objects = self.getObjects(inText: contents)
                 return objects
                 
             } catch {
@@ -77,7 +61,26 @@ class DataParser {
     }
     
     private func createObject(from text: String) -> ListItemModel? {
-        return ListItemModel(title: self.getValue(from: text, for: .title), firstImg: self.getValue(from: text, for: .firstimg), secondImg: self.getValue(from: text, for: .secondimg), thirdimg: self.getValue(from: text, for: .thirdimg), details: self.getValue(from: text, for: .details))
+        var listItem = ListItemModel(title: "", firstImg: "", secondImg: "", thirdimg: "", details: "")
+        var items = self.getValuesKeys(from: text)
+        let values = self.getValues(from: text, for: items)
+        
+        for item in values {
+            switch item.key {
+            case .title:
+                listItem.title = item.value
+            case .firstimg:
+                listItem.firstImg = item.value
+            case .secondimg:
+                listItem.secondImg = item.value
+            case .thirdimg:
+                listItem.thirdimg = item.value
+            case .details:
+                listItem.details = item.value
+            }
+        }
+        
+        return listItem
     }
     
     private func getStringObjects(inText text: String, pattern: String) -> [String]? {
@@ -88,7 +91,10 @@ class DataParser {
             let result = regex.matches(in: clearText, options: .init(rawValue: 0), range: NSRange(location: 0, length: clearText.count))
             
             let matches = result.map { result in
-                return (clearText as NSString).substring(with: result.range)
+                var r = (clearText as NSString).substring(with: result.range)
+                r.removeFirst()
+                r.removeLast()
+                return r
             }
             
             return matches
@@ -98,17 +104,40 @@ class DataParser {
         return nil
     }
     
-    private func getValue(from text:String, for type: ObjectFieldPattern) -> String {
-        do {
-            let regex = try NSRegularExpression(pattern: type.rawValue, options: .caseInsensitive)
-            let result = regex.matches(in: text, options: .init(rawValue: 0), range: NSRange(location: 0, length: text.count))
-            
-            guard let firstResult = result.first else {return ""}
-            let range = NSMakeRange(firstResult.range.location + type.head, firstResult.range.length - type.patternLen)
-            return (text as NSString).substring(with: range)
-        } catch {
-            print(error)
+    private func getValuesKeys(from text: String) -> [KeyIndexValue] {
+        print("Start parsing values")
+        print("Input String: \(text)")
+        var result: [KeyIndexValue] = []
+        for key in ValueKeys.allCases {
+            guard let range: Range<String.Index> = text.firstRange(of: key.rawValue) else { return []}
+            let index = text.distance(from: text.startIndex, to: range.lowerBound)
+            let item = KeyIndexValue(key: key, index: index, value: "")
+            result.append(item)
         }
-        return ""
+        
+        result = result.sorted(by: { $0.index < $1.index })
+        return result
+    }
+    
+    private func getValues(from text: String, for items: [KeyIndexValue]) -> [KeyIndexValue] {
+        var result: [KeyIndexValue]  = []
+        
+        for (i, item) in items.enumerated() {
+            var newItem = item
+            let valStart = item.index
+            var valEnd = -1
+            if i < items.count - 1 {
+                valEnd = items[i + 1].index
+            } else {
+                valEnd = text.count + 1
+            }
+           
+            let range = text.index(text.startIndex, offsetBy: valStart + item.key.rawValue.count)..<text.index(text.startIndex, offsetBy: valEnd - 1)
+            let val = text.substring(with: range)
+            
+            newItem.value = val
+            result.append(newItem)
+        }
+        return result
     }
 }
